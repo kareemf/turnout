@@ -13,8 +13,12 @@ class Rack::Turnout
   end
 
   def call(env)
-    request = Turnout::Request.new(env)
     settings = Turnout::MaintenanceFile.find
+
+    if settings
+      response = @app.call(env)
+      request = Turnout::Request.new(env)
+    end
 
     if settings && !request.allowed?(settings)
       page_class = Turnout::MaintenancePage.best_for(env)
@@ -22,7 +26,7 @@ class Rack::Turnout
 
       page.rack_response(settings.response_code, settings.retry_after)
     else
-      @app.call(env)
+      response ||= @app.call(env)
     end
   end
 end

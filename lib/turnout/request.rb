@@ -7,7 +7,9 @@ module Turnout
     end
 
     def allowed?(settings)
-      path_allowed?(settings.allowed_paths) || ip_allowed?(settings.allowed_ips)
+      path_allowed?(settings.allowed_paths) ||
+      ip_allowed?(settings.allowed_ips) ||
+      user_allowed?(settings.allowed_users)
     end
 
     private
@@ -29,6 +31,18 @@ module Turnout
 
       allowed_ips.any? do |allowed_ip|
         IPAddr.new(allowed_ip).include? ip
+      end
+    end
+
+    def user_allowed?(allowed_users)
+      warden = rack_request.env['warden']
+      return false unless warden
+
+      user = warden.user
+      return false unless user
+
+      allowed_users.any? do |allowed_user|
+        allowed_user == user.id
       end
     end
   end
