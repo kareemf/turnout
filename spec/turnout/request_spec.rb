@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'rspec/mocks'
 
 describe Turnout::Request do
   let(:path) { '/' }
@@ -39,6 +40,22 @@ describe Turnout::Request do
       context 'request from 10.0.0.42' do
         let(:ip) { '10.0.0.42' }
         it { should be true }
+      end
+
+      context 'with Warden authentication middleware' do
+        let(:id) { 2 }
+        let(:user) { double('user', :id => id) }
+        let(:warden) { double('warden', :user => user) }
+        let(:env) { Rack::MockRequest.env_for(path, {'REMOTE_ADDR' => ip, 'warden' => warden}) }
+
+        context 'request from user id 2' do
+          it { should be false }
+        end
+
+        context 'request from user id 1' do
+          let(:id) { 1 }
+          it { should be true }
+        end
       end
     end
   end
