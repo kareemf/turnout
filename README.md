@@ -9,6 +9,7 @@ Features
 * Easily provide a reason for each downtime without editing the maintenance.html file
 * Allow certain IPs or IP ranges to bypass the maintenance page
 * Allow certain paths to be accessible during maintenance
+* Allow certain user IDs to bypass the mainteance page, if using the [Warden](https://github.com/hassox/warden) authenication middleware
 * Easily override the default maintenance.html file with your own
 * Simple [YAML](http://yaml.org) based config file for easy activation, deactivation and configuration without the rake commands
 * Support for multiple maintenance page formats. Current [HTML](http://en.wikipedia.org/wiki/HTML) and [JSON](http://en.wikipedia.org/wiki/JSON)
@@ -65,8 +66,12 @@ or
 
 or
 
-    rake maintenance:start reason="Someone told me I should type <code>sudo rm -rf /</code>" allowed_paths="^/help,^/contact_us" allowed_ips="127.0.0.1,192.168.0.0/24"
-    
+    rake maintenance:start allowed_users="1,2"
+
+or
+
+    rake maintenance:start reason="Someone told me I should type <code>sudo rm -rf /</code>" allowed_paths="^/help,^/contact_us" allowed_ips="127.0.0.1,192.168.0.0/24" allowed_users="1,2"
+
 or if you've configured `named_maintenance_file_paths` with a path named `server`
 
     rake maintenance:server:start
@@ -74,7 +79,7 @@ or if you've configured `named_maintenance_file_paths` with a path named `server
 Notes
 -----
 * The `reason` parameter can contain HTML
-* Multiple `allowed_paths` and `allowed_ips` can be given. Just comma separate them.
+* Multiple `allowed_paths`, `allowed_ips`, and `allowed_users` can be given. Just comma separate them.
 * All `allowed_paths` are treated as regular expressions.
 * If you need to use a comma in an `allowed_paths` regular expression just escape it with a backslash: `\,`.
 * IP ranges can be given to `allowed_ips` using [CIDR notation](http://en.wikipedia.org/wiki/CIDR_notation).
@@ -173,6 +178,9 @@ allowed_paths:
 allowed_ips:
 - 127.0.0.1
 - 192.168.0.0/24
+allowed_users:
+- 1
+- 2
 response_code: 503
 retry_after: 3600
 ```

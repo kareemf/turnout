@@ -1,7 +1,7 @@
 require 'turnout'
 
 namespace :maintenance do
-  desc 'Enable the maintenance mode page ("reason", "allowed_paths", "allowed_ips" and "response_code" can be passed as environment variables)'
+  desc 'Enable the maintenance mode page ("reason", "allowed_paths", "allowed_ips", "allowed_users" and "response_code" can be passed as environment variables)'
   rule /\Amaintenance:(.*:|)start\Z/ do |task|
     invoke_environment
 
